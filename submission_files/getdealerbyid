@@ -1,3 +1,3 @@
-curl -X GET http://127.0.0.1:8000/djangoapp/get_dealer/1
+curl -X GET http://127.0.0.1:8000/djangoapp/fetchDealer/1
 
-{"id": 1, "city": "El Paso", "state": "Texas", "st": "TX", "address": "3 High Crossing Point", "zip": "79942", "full_name": "Apex Auto Sales", "short_name": "Apex Auto"}
+[{"id": 1, "city": "El Paso", "state": "Texas", "st": "TX", "address": "3 High Crossing Point", "zip": "79942", "lat": 31.7619, "long": -106.485, "short_name": "Apex Auto", "full_name": "Apex Auto Sales"}]
