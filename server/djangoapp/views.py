@@ -6,61 +6,31 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import CarMake, CarModel
 from .sentiment_analyzer import analyze_sentiment_text
 
-# Sample dealers dataset matching IBM Coursera Capstone schema
+# Generate dealers dataset with lat/long matching IBM Coursera Capstone schema
 SAMPLE_DEALERS = [
-    {
-        "id": 1,
-        "city": "El Paso",
-        "state": "Texas",
-        "st": "TX",
-        "address": "3 High Crossing Point",
-        "zip": "79942",
-        "full_name": "Apex Auto Sales",
-        "short_name": "Apex Auto"
-    },
-    {
-        "id": 2,
-        "city": "Minneapolis",
-        "state": "Minnesota",
-        "st": "MN",
-        "address": "9 High Crossing Trail",
-        "zip": "55425",
-        "full_name": "Northstar Motors",
-        "short_name": "Northstar"
-    },
-    {
-        "id": 3,
-        "city": "送信",
-        "state": "Alabama",
-        "st": "AL",
-        "address": "1 Huntley Parkway",
-        "zip": "35242",
-        "full_name": "Bama Dealership",
-        "short_name": "Bama Motors"
-    },
-    {
-        "id": 4,
-        "city": "Dallas",
-        "state": "Texas",
-        "st": "TX",
-        "address": "400 Main Street",
-        "zip": "75001",
-        "full_name": "Lone Star Hyundai",
-        "short_name": "Lone Star"
-    },
-    {
-        "id": 5,
-        "city": "Kansas City",
-        "state": "Kansas",
-        "st": "KS",
-        "address": "711 Oak Street",
-        "zip": "66101",
-        "full_name": "Heartland Toyota",
-        "short_name": "Heartland"
-    }
+    {"id": 1, "city": "El Paso", "state": "Texas", "st": "TX", "address": "3 High Crossing Point", "zip": "79942", "lat": 31.7619, "long": -106.485, "short_name": "Apex Auto", "full_name": "Apex Auto Sales"},
+    {"id": 2, "city": "Minneapolis", "state": "Minnesota", "st": "MN", "address": "9 High Crossing Trail", "zip": "55425", "lat": 44.9778, "long": -93.265, "short_name": "Northstar", "full_name": "Northstar Motors"},
+    {"id": 3, "city": "Birmingham", "state": "Alabama", "st": "AL", "address": "1 Huntley Parkway", "zip": "35242", "lat": 33.5186, "long": -86.8104, "short_name": "Bama Motors", "full_name": "Bama Dealership"},
+    {"id": 4, "city": "Dallas", "state": "Texas", "st": "TX", "address": "400 Main Street", "zip": "75001", "lat": 32.7767, "long": -96.797, "short_name": "Lone Star", "full_name": "Lone Star Hyundai"},
+    {"id": 5, "city": "Kansas City", "state": "Kansas", "st": "KS", "address": "711 Oak Street", "zip": "66101", "lat": 39.1141, "long": -94.6275, "short_name": "Heartland", "full_name": "Heartland Toyota"}
 ]
 
-# Sample reviews dataset matching IBM Coursera Capstone schema
+# Generate remaining 45 dealers to reach full 50 items
+for i in range(6, 51):
+    SAMPLE_DEALERS.append({
+        "id": i,
+        "city": f"City {i}",
+        "state": "Kansas" if i % 4 == 0 else ("Texas" if i % 2 == 0 else "California"),
+        "st": "KS" if i % 4 == 0 else ("TX" if i % 2 == 0 else "CA"),
+        "address": f"{i * 10} Main Boulevard",
+        "zip": f"{90000 + i}",
+        "lat": round(30.0 + (i * 0.2), 4),
+        "long": round(-95.0 - (i * 0.2), 4),
+        "short_name": f"Dealer {i}",
+        "full_name": f"Dealership Motors {i}"
+    })
+
+# Sample reviews dataset
 SAMPLE_REVIEWS = [
     {
         "id": 1,
