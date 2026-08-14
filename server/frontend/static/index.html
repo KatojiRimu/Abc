@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best Cars Dealership | Dealer Details & Reviews</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .review-card {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .sentiment-badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 0.25rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-positive { background: #22c55e; color: #ffffff; }
+        .badge-neutral { background: #eab308; color: #000000; }
+        .badge-negative { background: #ef4444; color: #ffffff; }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navbar -->
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">🏎️ Best Cars Dealership</a>
+        <ul class="nav-links">
+            <li><a href="/" class="nav-link">Home</a></li>
+            <li><a href="/about/" class="nav-link">About Us</a></li>
+            <li><a href="/contact/" class="nav-link">Contact Us</a></li>
+            <li id="auth-nav"><a href="/login/" class="btn-primary">Login</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="container">
+        <!-- Dealer Profile Header -->
+        <div class="glass-card" id="dealer-header">
+            <h1 id="dealer-title" style="color: var(--accent-blue); margin-bottom: 0.5rem;">Apex Auto Sales</h1>
+            <p id="dealer-address" style="color: var(--text-muted);">3 High Crossing Point, El Paso, TX 79942</p>
+            <div style="margin-top: 1.5rem;" id="write-review-container">
+                <a href="/postreview/1" class="btn-primary">✍️ Write a Review</a>
+            </div>
+        </div>
+
+        <!-- Customer Reviews Section -->
+        <h2 style="margin: 2rem 0 1rem; color: var(--text-main);">Customer Reviews</h2>
+        <div id="reviews-list">
+            <!-- Reviews dynamically loaded -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Best Cars Dealership Inc. All rights reserved. Capstone Project.</p>
+    </footer>
+
+    <script>
+        const dealerId = window.location.pathname.split('/').pop() || 1;
+        document.getElementById('write-review-container').innerHTML = `
+            <a href="/postreview/${dealerId}" class="btn-primary">✍️ Write a Review</a>
+        `;
+
+        async function loadDealerDetails() {
+            try {
+                const res = await fetch(`/djangoapp/get_dealer/${dealerId}`);
+                const data = await res.json();
+                if (data.dealer) {
+                    document.getElementById('dealer-title').textContent = data.dealer.full_name;
+                    document.getElementById('dealer-address').textContent = `${data.dealer.address}, ${data.dealer.city}, ${data.dealer.st} ${data.dealer.zip}`;
+                }
+            } catch(e) {}
+        }
+
+        async function loadReviews() {
+            try {
+                const res = await fetch(`/djangoapp/get_reviews/dealer/${dealerId}`);
+                const data = await res.json();
+                const container = document.getElementById('reviews-list');
+                container.innerHTML = '';
+
+                if (data.reviews && data.reviews.length > 0) {
+                    data.reviews.forEach(r => {
+                        const badgeClass = r.sentiment === 'positive' ? 'badge-positive' : (r.sentiment === 'negative' ? 'badge-negative' : 'badge-neutral');
+                        const card = document.createElement('div');
+                        card.className = 'review-card';
+                        card.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <h3 style="color: #ffffff; font-size: 1.1rem;">${r.name}</h3>
+                                <span class="sentiment-badge ${badgeClass}">${r.sentiment}</span>
+                            </div>
+                            <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.5; margin-bottom: 0.75rem;">"${r.review}"</p>
+                            <p style="color: #94a3b8; font-size: 0.85rem;">Car: ${r.car_year || ''} ${r.car_make || ''} ${r.car_model || ''}</p>
+                        `;
+                        container.appendChild(card);
+                    });
+                } else {
+                    container.innerHTML = '<p style="color: #94a3b8;">No reviews yet for this dealership.</p>';
+                }
+            } catch(e) {}
+        }
+
+        const username = sessionStorage.getItem('username');
+        if (username) {
+            document.getElementById('auth-nav').innerHTML = `
+                <span style="color: #38bdf8; font-weight: 600; margin-right: 1rem;">Welcome, ${username}</span>
+                <a href="#" onclick="sessionStorage.clear(); window.location.reload();" class="btn-primary" style="background: rgba(239, 68, 68, 0.8);">Logout</a>
+            `;
+        }
+
+        loadDealerDetails();
+        loadReviews();
+    </script>
+</body>
+</html>
