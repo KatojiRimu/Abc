@@ -1,0 +1,3 @@
+curl -X GET http://127.0.0.1:8000/djangoapp/get_dealers/Kansas
+
+[{"id": 5, "city": "Kansas City", "state": "Kansas", "st": "KS", "address": "711 Oak Street", "zip": "66101", "full_name": "Heartland Toyota", "short_name": "Heartland"}]

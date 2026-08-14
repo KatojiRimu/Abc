@@ -23,10 +23,10 @@ const Register = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          "username": userName,
+          "userName": userName,
           "password": password,
-          "first_name": firstName,
-          "last_name": lastName,
+          "firstName": firstName,
+          "lastName": lastName,
           "email": email
         }),
       });
@@ -49,8 +49,8 @@ const Register = () => {
   return (
     <div className="register-container">
       <div className="register-card">
-        <h2 className="register-title">Create Account</h2>
-        <p className="register-subtitle">Register to submit dealership reviews and rate vehicles.</p>
+        <h2 className="register-title">Sign-up</h2>
+        <p className="register-subtitle">Create your account to view dealerships and submit vehicle reviews.</p>
 
         {errorMessage && (
           <div className="alert-danger">
@@ -69,7 +69,7 @@ const Register = () => {
               <input
                 type="text"
                 name="username"
-                placeholder="Enter username"
+                placeholder="Username"
                 className="form-input"
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
@@ -82,8 +82,8 @@ const Register = () => {
                 <label className="form-label">First Name</label>
                 <input
                   type="text"
-                  name="first_name"
-                  placeholder="Enter first name"
+                  name="firstname"
+                  placeholder="First Name"
                   className="form-input"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
@@ -95,8 +95,8 @@ const Register = () => {
                 <label className="form-label">Last Name</label>
                 <input
                   type="text"
-                  name="last_name"
-                  placeholder="Enter last name"
+                  name="lastname"
+                  placeholder="Last Name"
                   className="form-input"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
@@ -106,11 +106,11 @@ const Register = () => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Email Address</label>
+              <label className="form-label">Email</label>
               <input
                 type="email"
                 name="email"
-                placeholder="name@example.com"
+                placeholder="Email"
                 className="form-input"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -123,7 +123,7 @@ const Register = () => {
               <input
                 type="password"
                 name="password"
-                placeholder="••••••••"
+                placeholder="Password"
                 className="form-input"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -132,7 +132,7 @@ const Register = () => {
             </div>
 
             <button type="submit" className="btn-submit">
-              Register Account
+              Register
             </button>
           </form>
         )}

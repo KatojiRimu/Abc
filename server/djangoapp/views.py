@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import CarMake, CarModel
 from .sentiment_analyzer import analyze_sentiment_text
 
-# In-memory sample dealers dataset for capstone demonstration
+# Sample dealers dataset matching IBM Coursera Capstone schema
 SAMPLE_DEALERS = [
     {
         "id": 1,
@@ -30,7 +30,7 @@ SAMPLE_DEALERS = [
     },
     {
         "id": 3,
-        "city": "Birmingham",
+        "city": "送信",
         "state": "Alabama",
         "st": "AL",
         "address": "1 Huntley Parkway",
@@ -60,18 +60,18 @@ SAMPLE_DEALERS = [
     }
 ]
 
-# In-memory sample reviews dataset
+# Sample reviews dataset matching IBM Coursera Capstone schema
 SAMPLE_REVIEWS = [
     {
         "id": 1,
-        "name": "John Doe",
+        "name": "Berkly Tristram",
         "dealership": 1,
-        "review": "Great dealership! Friendly staff and seamless transaction.",
+        "review": "Total chaotic service",
         "purchase": True,
-        "purchase_date": "2024-01-15",
-        "car_make": "Toyota",
-        "car_model": "Camry",
-        "car_year": 2023,
+        "purchase_date": "07/11/2020",
+        "car_make": "Audi",
+        "car_model": "A6",
+        "car_year": 2010,
         "sentiment": "positive"
     },
     {
@@ -85,18 +85,6 @@ SAMPLE_REVIEWS = [
         "car_model": "Civic",
         "car_year": 2022,
         "sentiment": "neutral"
-    },
-    {
-        "id": 3,
-        "name": "Michael Brown",
-        "dealership": 2,
-        "review": "Terrible service, car had hidden mechanical issues upon delivery.",
-        "purchase": True,
-        "purchase_date": "2023-11-20",
-        "car_make": "Ford",
-        "car_model": "F-150",
-        "car_year": 2021,
-        "sentiment": "negative"
     }
 ]
 
@@ -106,15 +94,15 @@ def login_user(request):
     """Handles user authentication login requests."""
     if request.method == "POST":
         data = json.loads(request.body)
-        username = data.get('username')
+        username = data.get('userName') or data.get('username')
         password = data.get('password')
 
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
-            return JsonResponse({"userName": username, "status": "Authenticated", "status_code": 200})
+            return JsonResponse({"userName": username, "status": "Authenticated"})
         else:
-            return JsonResponse({"status": "Failed", "message": "Invalid credentials"}, status=400)
+            return JsonResponse({"userName": username, "status": "Failed", "message": "Invalid credentials"}, status=400)
     return JsonResponse({"status": "Error", "message": "POST method required"}, status=405)
 
 
@@ -122,7 +110,7 @@ def login_user(request):
 def logout_request(request):
     """Handles user logout requests."""
     logout(request)
-    return JsonResponse({"userName": "", "status": "Logged out", "status_code": 200})
+    return JsonResponse({"userName": "", "status": "Logged out"})
 
 
 @csrf_exempt
@@ -130,14 +118,14 @@ def registration(request):
     """Handles user registration requests with 5 required fields."""
     if request.method == "POST":
         data = json.loads(request.body)
-        username = data.get('username')
-        first_name = data.get('first_name')
-        last_name = data.get('last_name')
+        username = data.get('userName') or data.get('username')
+        first_name = data.get('firstName') or data.get('first_name')
+        last_name = data.get('lastName') or data.get('last_name')
         email = data.get('email')
         password = data.get('password')
 
         if User.objects.filter(username=username).exists():
-            return JsonResponse({"status": "Failed", "error": "Already Registered"}, status=400)
+            return JsonResponse({"userName": username, "error": "Already Registered"}, status=400)
 
         user = User.objects.create_user(
             username=username,
@@ -147,7 +135,7 @@ def registration(request):
             password=password
         )
         login(request, user)
-        return JsonResponse({"userName": username, "status": "Authenticated", "status_code": 200})
+        return JsonResponse({"userName": username, "status": "Authenticated"})
     return JsonResponse({"status": "Error", "message": "POST method required"}, status=405)
 
 
@@ -155,7 +143,6 @@ def get_cars(request):
     """Retrieves all Car Makes and Car Models."""
     count = CarMake.objects.filter().count()
     if count == 0:
-        # Populate initial test data if empty
         make1 = CarMake.objects.create(name="Toyota", description="Japanese Automotive Manufacturer")
         make2 = CarMake.objects.create(name="Honda", description="Japanese Motor Company")
         make3 = CarMake.objects.create(name="Ford", description="American Motor Company")
@@ -178,36 +165,32 @@ def get_cars(request):
 
 
 def get_dealerships(request, state="All"):
-    """Retrieves list of dealers, optionally filtered by state."""
+    """Retrieves list of dealers as a raw JSON array or filtered by state."""
     if state == "All" or not state:
-        return JsonResponse({"status": 200, "dealers": SAMPLE_DEALERS})
+        return JsonResponse(SAMPLE_DEALERS, safe=False)
     else:
         filtered_dealers = [d for d in SAMPLE_DEALERS if d["st"].lower() == state.lower() or d["state"].lower() == state.lower()]
-        return JsonResponse({"status": 200, "dealers": filtered_dealers})
+        return JsonResponse(filtered_dealers, safe=False)
 
 
 def get_dealer_details(request, dealer_id):
     """Retrieves single dealer by ID."""
     dealer = next((d for d in SAMPLE_DEALERS if d["id"] == dealer_id), None)
     if dealer:
-        return JsonResponse({"status": 200, "dealer": dealer})
-    return JsonResponse({"status": 404, "message": "Dealer not found"}, status=404)
+        return JsonResponse(dealer, safe=False)
+    return JsonResponse({"message": "Dealer not found"}, status=404)
 
 
 def get_dealer_reviews(request, dealer_id):
-    """Retrieves reviews for a specific dealer with sentiment classification."""
+    """Retrieves reviews array for a specific dealer."""
     reviews = [r for r in SAMPLE_REVIEWS if r["dealership"] == dealer_id]
-    return JsonResponse({"status": 200, "reviews": reviews})
+    return JsonResponse(reviews, safe=False)
 
 
 @csrf_exempt
 def add_review(request):
     """Adds a new dealer review with automated sentiment analysis."""
     if request.method == "POST":
-        if not request.user.is_authenticated:
-            # Allow submission in API mode if user data provided
-            pass
-        
         data = json.loads(request.body)
         review_content = data.get('review', '')
         sentiment = analyze_sentiment_text(review_content)
