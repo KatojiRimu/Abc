@@ -15,6 +15,7 @@ urlpatterns = [
     path('fetchDealers', djangoapp_views.get_dealerships, name='root_fetch_dealers'),
     path('fetchDealers/<str:state>', djangoapp_views.get_dealerships, name='root_fetch_dealers_by_state'),
     path('fetchDealer/<int:dealer_id>', djangoapp_views.get_dealer_details, name='root_fetch_dealer_by_id'),
+    path('analyze/<str:text>', djangoapp_views.analyze_review_sentiment, name='root_analyze_sentiment'),
 
     path('', TemplateView.as_view(template_name="Home.html"), name='home'),
     path('about/', TemplateView.as_view(template_name="About.html"), name='about'),
