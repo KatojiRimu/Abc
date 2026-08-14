@@ -1,0 +1,23 @@
+JOBS
+✓ Lint Python Files in 16s (ID 53738140285)
+✓ Lint JavaScript Files in 14s (ID 53738140286)
+
+Run actions/checkout@v3
+✓ Set up Python 3.10
+Run Install flake8
+pip install flake8
+✓ Install flake8
+Run Run Linter
+flake8 server/
+✓ Run Linter
+✓ Post Set up Python
+
+Run actions/setup-node@v3
+✓ Set up Node 18
+Run Install JSHint
+npm install -g jshint
+✓ Install JSHint
+Run Run Linter
+jshint server/frontend/src/
+✓ Run Linter
+✓ Post Set up Node.js
