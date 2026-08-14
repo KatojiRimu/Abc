@@ -10,12 +10,11 @@ from .sentiment_analyzer import analyze_sentiment_text
 SAMPLE_DEALERS = [
     {"id": 1, "city": "El Paso", "state": "Texas", "st": "TX", "address": "3 High Crossing Point", "zip": "79942", "lat": 31.7619, "long": -106.485, "short_name": "Apex Auto", "full_name": "Apex Auto Sales"},
     {"id": 2, "city": "Minneapolis", "state": "Minnesota", "st": "MN", "address": "9 High Crossing Trail", "zip": "55425", "lat": 44.9778, "long": -93.265, "short_name": "Northstar", "full_name": "Northstar Motors"},
-    {"id": 3, "city": "Birmingham", "state": "Alabama", "st": "AL", "address": "1 Huntley Parkway", "zip": "35242", "lat": 33.5186, "long": -86.8104, "short_name": "Bama Motors", "full_name": "Bama Dealership"},
+    {"id": 3, "city": "送信", "state": "Alabama", "st": "AL", "address": "1 Huntley Parkway", "zip": "35242", "lat": 33.5186, "long": -86.8104, "short_name": "Bama Motors", "full_name": "Bama Dealership"},
     {"id": 4, "city": "Dallas", "state": "Texas", "st": "TX", "address": "400 Main Street", "zip": "75001", "lat": 32.7767, "long": -96.797, "short_name": "Lone Star", "full_name": "Lone Star Hyundai"},
     {"id": 5, "city": "Kansas City", "state": "Kansas", "st": "KS", "address": "711 Oak Street", "zip": "66101", "lat": 39.1141, "long": -94.6275, "short_name": "Heartland", "full_name": "Heartland Toyota"}
 ]
 
-# Generate remaining 45 dealers to reach full 50 items
 for i in range(6, 51):
     SAMPLE_DEALERS.append({
         "id": i,
@@ -183,6 +182,6 @@ def add_review(request):
 
 
 def analyze_review_sentiment(request, text):
-    """Standalone sentiment analysis API endpoint."""
+    """Standalone sentiment analysis API endpoint matching Coursera spec."""
     sentiment = analyze_sentiment_text(text)
-    return JsonResponse({"status": 200, "sentiment": sentiment, "text": text})
+    return JsonResponse({"sentiment": sentiment})
